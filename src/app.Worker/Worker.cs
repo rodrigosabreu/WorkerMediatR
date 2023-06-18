@@ -17,8 +17,14 @@ namespace app.Worker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //consulta a base uma unica vez, e coloca os dados em cache para ser acessado em outras partes da aplicação
+            _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+
             await _mediator.Send(new GetEstruturaComercialQuery());
+
+            await _mediator.Send(new ProcessMessageCommand());
+
+            //consulta a base uma unica vez, e coloca os dados em cache para ser acessado em outras partes da aplicação
+            /*await _mediator.Send(new GetEstruturaComercialQuery());
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -35,7 +41,7 @@ namespace app.Worker
 
                 await Task.Delay(1000, stoppingToken);
               
-            }
+            }*/
         }
     }
 }

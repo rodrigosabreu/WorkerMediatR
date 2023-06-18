@@ -1,6 +1,7 @@
 using app.Application.Commands;
 using app.Application.Interfaces;
 using app.Application.Queries;
+using app.Application.Services;
 using app.Domain.Entities;
 using app.Domain.Services;
 using app.Infrastructure.Context;
@@ -25,11 +26,14 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddTransient<IProductService, ProductService>();
         services.AddTransient<IEstruturaComercialService, EstruturaComercialService>();
         services.AddTransient<ISqsService, SqsService>();
+        services.AddTransient<IKafkaConsumerService, KafkaConsumerService>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));        
         services.AddTransient<IRequestHandler<SendMessageCommand>, SendMessageCommandHandler>();
+        services.AddTransient<IRequestHandler<ProcessMessageCommand>, ProcessMessageCommandHandler>();
         services.AddTransient<IRequestHandler<GetProductsQuery, IEnumerable<Product>>, GetProductsQueryHandler>();
         services.AddTransient<IRequestHandler<GetEstruturaComercialQuery>, GetEstruturaComercialQueryHandler>();
+        
 
         services.AddDbContext<AppDbContext>(ServiceLifetime.Singleton);
 

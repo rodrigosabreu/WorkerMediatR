@@ -1,6 +1,7 @@
 ﻿using app.Application.Interfaces;
 using app.Domain.Entities;
 using MediatR;
+using Newtonsoft.Json;
 
 namespace app.Application.Commands
 {
@@ -15,14 +16,9 @@ namespace app.Application.Commands
 
         public async Task Handle(SendMessageCommand request, CancellationToken cancellationToken)
         {
-            var msg = new Product
-            {
-                Id = request.Id,
-                Name = request.Nome,
-                Quantity = request.Quantidade
-            };
+            var transaction = JsonConvert.DeserializeObject<Transacao>(request.Message);
 
-            _sqsService.PublishMessage(msg);
+            _sqsService.PublishMessage(transaction);
         }
       
     }

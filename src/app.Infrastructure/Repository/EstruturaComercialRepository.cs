@@ -2,6 +2,7 @@
 using app.Domain.Entities;
 using app.Infrastructure.Context;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace app.Infrastructure.Repository
 {
@@ -9,11 +10,13 @@ namespace app.Infrastructure.Repository
     {
         private readonly IMemoryCache _cache;
         private readonly EstruturaComercialContext _context;
+        private readonly ILogger<EstruturaComercialRepository> _logger;
 
-        public EstruturaComercialRepository(EstruturaComercialContext context, IMemoryCache cache = null)
+        public EstruturaComercialRepository(EstruturaComercialContext context, IMemoryCache cache, ILogger<EstruturaComercialRepository> logger)
         {
             _context = context;
             _cache = cache;
+            _logger = logger;
         }
 
         public void SetCacheEstruturaComercial()
@@ -23,6 +26,8 @@ namespace app.Infrastructure.Repository
             Dictionary<int, EstruturaComercial> dicionarioProdutos = dados.ToDictionary(p => p.IdCliente);            
 
             _cache.Set("EstruturaComercialCache", dicionarioProdutos);
+
+            _logger.LogInformation("Subindo Estrutura Comerical para memoria em : {time}", DateTimeOffset.Now);
         }
 
         public Dictionary<int, EstruturaComercial> GetCacheEstruturaComercial()

@@ -5,10 +5,10 @@ namespace app.Domain.Services
 {
     public class SqsService : ISqsService
     {
-        public void PublishMessage(Product message)
+        public void PublishMessage(Transacao message)
         {
             // Lógica para publicar mensagem no Amazon SQS
-            Console.WriteLine($"Published message: {message.Id}, {message.Name}, {message.Name}");
+            Console.WriteLine($"Published message: {message.CustomerId}, {message.Amount}, {message.TransactionType}");
         }
     }
 }
