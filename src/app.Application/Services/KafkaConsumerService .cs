@@ -58,7 +58,7 @@ namespace app.Application.Services
                             Message = transaction
                         });
 
-                        //consumer.Commit(consumeResult);
+                        consumer.Commit(consumeResult);
                     }
                     catch (ConsumeException ex)
                     {

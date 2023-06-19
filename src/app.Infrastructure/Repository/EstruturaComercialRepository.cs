@@ -23,7 +23,7 @@ namespace app.Infrastructure.Repository
         {
             var dados = _context.estruturas.ToList();
 
-            Dictionary<int, EstruturaComercial> dicionarioProdutos = dados.ToDictionary(p => p.IdCliente);            
+            Dictionary<int, EstruturaComercial> dicionarioProdutos = dados.ToDictionary(p => p.IdCliente);
 
             _cache.Set("EstruturaComercialCache", dicionarioProdutos);
 
