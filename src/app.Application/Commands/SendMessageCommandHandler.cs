@@ -26,7 +26,7 @@ namespace app.Application.Commands
 
                 if (estrutura.TryGetValue(clienteID, out _))
                 {
-                    _sqsService.PublishMessage(transaction);
+                    _sqsService.PublishMessage(transaction, estrutura[clienteID]);
                 }
             }
         }

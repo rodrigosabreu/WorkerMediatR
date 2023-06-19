@@ -4,6 +4,6 @@ namespace app.Application.Interfaces
 {
     public interface ISqsService
     {
-        void PublishMessage(Transacao transacao);
+        void PublishMessage(Transacao transacao, EstruturaComercial estrutura);
     }
 }
