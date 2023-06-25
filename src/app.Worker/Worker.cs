@@ -1,30 +1,32 @@
-using app.Application.Commands;
 using app.Application.Queries;
+using app.Infrastructure.Log;
 using MediatR;
 
 namespace app.Worker
 {
     public class Worker : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
-        private readonly IMediator _mediator;        
+        private ILogger<Worker> _logger;
+        private ILogManager _loggerManager;
 
-        public Worker(ILogger<Worker> logger, IMediator mediator)
+        private readonly IMediator _mediator;
+
+        public Worker(ILogger<Worker> logger, IMediator mediator, ILogManager loggerManager)
         {
             _logger = logger;
-            _mediator = mediator;            
+            _mediator = mediator;
+            _loggerManager = loggerManager;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+        {         
+            
+            _loggerManager.LogInformation($"{typeof(Worker)}Worker running at: {DateTimeOffset.Now}");
 
             await _mediator.Send(new GetEstruturaComercialQuery());
 
-            await _mediator.Send(new ProcessMessageCommand());
+            //await _mediator.Send(new ProcessMessageCommand());
         }
-
-
 
 
 

@@ -5,20 +5,21 @@ using app.Application.Services;
 using app.Domain.Entities;
 using app.Domain.Services;
 using app.Infrastructure.Context;
+using app.Infrastructure.Log;
 using app.Infrastructure.Repository;
 using app.Worker;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-IHost host = Host.CreateDefaultBuilder(args)
+IHost host = Host.CreateDefaultBuilder(args)    
     .ConfigureServices(services =>
     {
         IConfiguration config = new ConfigurationBuilder()
               .SetBasePath(Directory.GetCurrentDirectory())
               .AddJsonFile("appsettings.json")
-              .Build();
-
+        .Build();
+        
         // Registrar dependências
         services.AddSingleton<IProductRepository, ProductRepository>();
         services.AddSingleton<IEstruturaComercialRepository, EstruturaComercialRepository>();
@@ -27,6 +28,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddTransient<IEstruturaComercialService, EstruturaComercialService>();
         services.AddTransient<ISqsService, SqsService>();
         services.AddTransient<IKafkaConsumerService, KafkaConsumerService>();
+        services.AddTransient<ILogManager, LogManager>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));        
         services.AddTransient<IRequestHandler<SendMessageCommand>, SendMessageCommandHandler>();

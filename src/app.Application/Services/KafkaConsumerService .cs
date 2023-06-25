@@ -13,7 +13,7 @@ namespace app.Application.Services
         private readonly IMediator _mediator;
         private readonly ConsumerConfig _consumerConfig;
         private readonly CancellationTokenSource _cancellationTokenSource;
-        private readonly ILogger<KafkaConsumerService> _logger;
+        private readonly ILogger<KafkaConsumerService> _logger;        
 
         public KafkaConsumerService(IMediator mediator, ILogger<KafkaConsumerService> logger = null)
         {
