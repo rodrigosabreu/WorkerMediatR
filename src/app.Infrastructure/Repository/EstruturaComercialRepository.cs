@@ -1,7 +1,6 @@
 ﻿using app.Application.Interfaces;
 using app.Domain.Entities;
 using app.Infrastructure.Context;
-using app.Infrastructure.Log;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -11,33 +10,31 @@ namespace app.Infrastructure.Repository
     {
         private readonly IMemoryCache _cache;
         private readonly EstruturaComercialContext _context;
-        private readonly ILogger<EstruturaComercialRepository> _logger;
-        private readonly ILogManager _loggerManager;
+        private readonly ILogger<EstruturaComercialRepository> _logger;        
 
-        public EstruturaComercialRepository(EstruturaComercialContext context, IMemoryCache cache, ILogger<EstruturaComercialRepository> logger, ILogManager loggerManager)
+        public EstruturaComercialRepository(EstruturaComercialContext context, IMemoryCache cache, ILogger<EstruturaComercialRepository> logger)
         {
             _context = context;
             _cache = cache;
-            _logger = logger;
-            _loggerManager = loggerManager;
+            _logger = logger;            
         }
 
         public void SetCacheEstruturaComercial()
         {
             try
             {
+                _logger.LogInformation("Método SetCacheEstruturaComercial : {time}", DateTimeOffset.Now);
+
                 var dados = _context.estruturas.ToList();
 
                 Dictionary<int, EstruturaComercial> dicionarioProdutos = dados.ToDictionary(p => p.IdCliente);
 
-                _cache.Set("EstruturaComercialCache", dicionarioProdutos);
-
-                _logger.LogInformation("Subindo Estrutura Comerical para memoria em : {time}", DateTimeOffset.Now);
-                _loggerManager.LogInformation($"{typeof(EstruturaComercialRepository)} - Subindo Estrutura Comerical para memoria em : {DateTimeOffset.Now}");
-            }
+                _cache.Set("EstruturaComercialCache", dicionarioProdutos);                
+                
+            }            
             catch(Exception e)
             {
-                _loggerManager.LogError($"{typeof(EstruturaComercialRepository)} - ERRO: {e.Message}");
+                _logger.LogError("Método SetCacheEstruturaComercial : {time} - Mensagem: ", e.Message);
                 throw;
             }
         }
@@ -46,7 +43,7 @@ namespace app.Infrastructure.Repository
         {
             if (_cache.TryGetValue("EstruturaComercialCache", out Dictionary<int, EstruturaComercial> dados))
             {
-                _loggerManager.LogInformation($"{typeof(EstruturaComercialRepository)} - Consultado os dados da memoria : {dados}");
+                _logger.LogInformation("Método GetCacheEstruturaComercial : {time}", DateTimeOffset.Now);
                 // Utilize os dados conforme necessário
                 return dados;
             }

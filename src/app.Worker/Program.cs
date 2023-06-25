@@ -5,14 +5,21 @@ using app.Application.Services;
 using app.Domain.Entities;
 using app.Domain.Services;
 using app.Infrastructure.Context;
-using app.Infrastructure.Log;
 using app.Infrastructure.Repository;
 using app.Worker;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Reflection;
 
-IHost host = Host.CreateDefaultBuilder(args)    
+IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureLogging(logging =>
+    {
+        //logging.ClearProviders();
+        logging.AddSerilog(new LoggerConfiguration()
+            .WriteTo.EventCollector("http://localhost:8088/services/collector", "f5289bca-1e3f-4d1a-9d4a-66a8613645b7")
+            .CreateLogger());
+    })
     .ConfigureServices(services =>
     {
         IConfiguration config = new ConfigurationBuilder()
@@ -27,8 +34,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddTransient<IProductService, ProductService>();
         services.AddTransient<IEstruturaComercialService, EstruturaComercialService>();
         services.AddTransient<ISqsService, SqsService>();
-        services.AddTransient<IKafkaConsumerService, KafkaConsumerService>();
-        services.AddTransient<ILogManager, LogManager>();
+        services.AddTransient<IKafkaConsumerService, KafkaConsumerService>();        
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));        
         services.AddTransient<IRequestHandler<SendMessageCommand>, SendMessageCommandHandler>();
