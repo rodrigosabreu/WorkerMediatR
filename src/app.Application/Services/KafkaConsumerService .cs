@@ -45,13 +45,13 @@ namespace app.Application.Services
                     {
                         var consumeResult = consumer.Consume();
                         if(!startConsume)
-                            _logger.LogWarning("Consumo iniciado em: {time}", DateTimeOffset.Now);
+                            _logger.LogInformation("Consumo iniciado em: {time}", DateTimeOffset.Now);
                         startConsume = true;
                         var message = consumeResult.Message.Value;
 
                         //var transaction = JsonConvert.DeserializeObject<Transacao>(consumeResult.Message.Value);
                         var transaction = consumeResult.Message.Value;
-                        Console.WriteLine(message);
+                        _logger.LogInformation($"Mensagem: {message}");
 
                         await _mediator.Send(new SendMessageCommand()
                         {

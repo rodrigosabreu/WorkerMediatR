@@ -1,3 +1,4 @@
+using app.Application.Commands;
 using app.Application.Queries;
 using MediatR;
 
@@ -21,7 +22,7 @@ namespace app.Worker
 
             await _mediator.Send(new GetEstruturaComercialQuery());
 
-            //await _mediator.Send(new ProcessMessageCommand());
+            await _mediator.Send(new ProcessMessageCommand());
         }
 
 
