@@ -1,6 +1,8 @@
 ﻿using app.Application.Interfaces;
 using app.Domain.Entities;
+using app.Domain.Services;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace app.Application.Commands
@@ -9,11 +11,13 @@ namespace app.Application.Commands
     {
         private readonly ISqsService _sqsService;
         private readonly IEstruturaComercialService _estruturaComercialService;
+        private readonly ILogger<SendMessageCommandHandler> _logger;
 
-        public SendMessageCommandHandler(ISqsService sqsService, IEstruturaComercialService estruturaComercialService)
+        public SendMessageCommandHandler(ISqsService sqsService, IEstruturaComercialService estruturaComercialService, ILogger<SendMessageCommandHandler> logger)
         {
             _sqsService = sqsService;
             _estruturaComercialService = estruturaComercialService;
+            _logger = logger;
         }
 
         public async Task Handle(SendMessageCommand request, CancellationToken cancellationToken)
@@ -27,6 +31,10 @@ namespace app.Application.Commands
                 if (estrutura.TryGetValue(clienteID, out _))
                 {
                     _sqsService.PublishMessage(transaction, estrutura[clienteID]);
+                }
+                else
+                {
+                    _logger.LogInformation($"Descarte: {transaction.CustomerId} -  {transaction.Amount} -  {transaction.TransactionType}");
                 }
             }
         }

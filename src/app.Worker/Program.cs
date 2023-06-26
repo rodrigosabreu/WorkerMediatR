@@ -17,7 +17,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         //logging.ClearProviders();
         logging.AddSerilog(new LoggerConfiguration()
-            .WriteTo.EventCollector("http://localhost:8088/services/collector", "f5289bca-1e3f-4d1a-9d4a-66a8613645b7")
+            .WriteTo.EventCollector("http://localhost:8088/services/collector", "671153f3-d202-4c26-8e81-bbbdbeb5d1eb")
             .CreateLogger());
     })
     .ConfigureServices(services =>

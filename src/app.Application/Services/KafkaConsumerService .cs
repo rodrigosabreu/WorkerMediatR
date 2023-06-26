@@ -1,10 +1,8 @@
-﻿using app.Application.Interfaces;
-using MediatR;
+﻿using app.Application.Commands;
+using app.Application.Interfaces;
 using Confluent.Kafka;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using app.Domain.Entities;
-using app.Application.Commands;
 
 namespace app.Application.Services
 {
@@ -49,16 +47,17 @@ namespace app.Application.Services
                         startConsume = true;
                         var message = consumeResult.Message.Value;
 
-                        //var transaction = JsonConvert.DeserializeObject<Transacao>(consumeResult.Message.Value);
-                        var transaction = consumeResult.Message.Value;
-                        _logger.LogInformation($"Mensagem: {message}");
+                        //var t = JsonConvert.DeserializeObject<Transacao>(consumeResult.Message.Value);
+                        var transaction = consumeResult.Message.Value;                       
+
+                        _logger.LogInformation($"Mensagem: {transaction}");
 
                         await _mediator.Send(new SendMessageCommand()
                         {
                             Message = transaction
                         });
 
-                        consumer.Commit(consumeResult);
+                        //consumer.Commit(consumeResult);
                     }
                     catch (ConsumeException ex)
                     {
