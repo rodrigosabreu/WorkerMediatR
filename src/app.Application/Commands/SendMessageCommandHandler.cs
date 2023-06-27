@@ -1,6 +1,6 @@
 ﻿using app.Application.Interfaces;
+using app.Application.Log;
 using app.Domain.Entities;
-using app.Domain.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -11,9 +11,9 @@ namespace app.Application.Commands
     {
         private readonly ISqsService _sqsService;
         private readonly IEstruturaComercialService _estruturaComercialService;
-        private readonly ILogger<SendMessageCommandHandler> _logger;
+        private readonly ILoggerWorker<SendMessageCommandHandler> _logger;
 
-        public SendMessageCommandHandler(ISqsService sqsService, IEstruturaComercialService estruturaComercialService, ILogger<SendMessageCommandHandler> logger)
+        public SendMessageCommandHandler(ISqsService sqsService, IEstruturaComercialService estruturaComercialService, ILoggerWorker<SendMessageCommandHandler> logger)
         {
             _sqsService = sqsService;
             _estruturaComercialService = estruturaComercialService;
@@ -34,7 +34,7 @@ namespace app.Application.Commands
                 }
                 else
                 {
-                    _logger.LogInformation($"Descarte: {transaction.CustomerId} -  {transaction.Amount} -  {transaction.TransactionType}");
+                    _logger.LogInfo($"Descarte: {transaction.CustomerId} -  {transaction.Amount} -  {transaction.TransactionType}");
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using app.Application.Interfaces;
+using app.Application.Log;
 using app.Domain.Entities;
 using app.Infrastructure.Context;
 using Microsoft.Extensions.Caching.Memory;
@@ -10,9 +11,9 @@ namespace app.Infrastructure.Repository
     {
         private readonly IMemoryCache _cache;
         private readonly EstruturaComercialContext _context;
-        private readonly ILogger<EstruturaComercialRepository> _logger;        
+        private readonly ILoggerWorker<EstruturaComercialRepository> _logger;        
 
-        public EstruturaComercialRepository(EstruturaComercialContext context, IMemoryCache cache, ILogger<EstruturaComercialRepository> logger)
+        public EstruturaComercialRepository(EstruturaComercialContext context, IMemoryCache cache, ILoggerWorker<EstruturaComercialRepository> logger)
         {
             _context = context;
             _cache = cache;
@@ -23,7 +24,7 @@ namespace app.Infrastructure.Repository
         {
             try
             {
-                _logger.LogInformation("Método SetCacheEstruturaComercial : {time}", DateTimeOffset.Now);
+                _logger.LogInfo($"Método SetCacheEstruturaComercial : {DateTimeOffset.Now}");
 
                 var dados = _context.estruturas.ToList();
 
@@ -34,7 +35,7 @@ namespace app.Infrastructure.Repository
             }            
             catch(Exception e)
             {
-                _logger.LogError("Método SetCacheEstruturaComercial : {time} - Mensagem: ", e.Message);
+                _logger.LogException("Método SetCacheEstruturaComercial : {time} - Mensagem: ", e);
                 throw;
             }
         }
@@ -43,7 +44,7 @@ namespace app.Infrastructure.Repository
         {
             if (_cache.TryGetValue("EstruturaComercialCache", out Dictionary<int, EstruturaComercial> dados))
             {
-                _logger.LogInformation("Método GetCacheEstruturaComercial : {time}", DateTimeOffset.Now);
+                _logger.LogInfo($"Método GetCacheEstruturaComercial : {DateTimeOffset.Now}");
                 // Utilize os dados conforme necessário
                 return dados;
             }

@@ -1,5 +1,6 @@
 ﻿using app.Application.Commands;
 using app.Application.Interfaces;
+using app.Application.Log;
 using Confluent.Kafka;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -11,9 +12,9 @@ namespace app.Application.Services
         private readonly IMediator _mediator;
         private readonly ConsumerConfig _consumerConfig;
         private readonly CancellationTokenSource _cancellationTokenSource;
-        private readonly ILogger<KafkaConsumerService> _logger;        
+        private readonly ILoggerWorker<KafkaConsumerService> _logger;        
 
-        public KafkaConsumerService(IMediator mediator, ILogger<KafkaConsumerService> logger = null)
+        public KafkaConsumerService(IMediator mediator, ILoggerWorker<KafkaConsumerService> logger = null)
         {
             _mediator = mediator;
 
@@ -33,7 +34,7 @@ namespace app.Application.Services
         {
             using var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build();
             consumer.Subscribe("transacoes_financeiras");
-            _logger.LogInformation("Topico subscrito em: {time}", DateTimeOffset.Now);
+            _logger.LogInfo($"Topico subscrito em: {DateTimeOffset.Now}");
             bool startConsume = false;
             try
             {
@@ -43,14 +44,14 @@ namespace app.Application.Services
                     {
                         var consumeResult = consumer.Consume();
                         if(!startConsume)
-                            _logger.LogInformation("Consumo iniciado em: {time}", DateTimeOffset.Now);
+                            _logger.LogInfo($"Consumo iniciado em: {DateTimeOffset.Now}");
                         startConsume = true;
                         var message = consumeResult.Message.Value;
 
                         //var t = JsonConvert.DeserializeObject<Transacao>(consumeResult.Message.Value);
                         var transaction = consumeResult.Message.Value;                       
 
-                        _logger.LogInformation($"Mensagem: {transaction}");
+                        _logger.LogInfo($"Mensagem: {transaction}");
 
                         await _mediator.Send(new SendMessageCommand()
                         {
@@ -61,11 +62,11 @@ namespace app.Application.Services
                     }
                     catch (ConsumeException ex)
                     {
-                        _logger.LogError("Erro em: {time}", DateTimeOffset.Now);
+                        _logger.LogException("Erro em: {DateTimeOffset.Now}", ex);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError("Erro em: {time}", DateTimeOffset.Now);
+                        _logger.LogException("Erro em: {DateTimeOffset.Now}", ex);
                     }
                 }
             }

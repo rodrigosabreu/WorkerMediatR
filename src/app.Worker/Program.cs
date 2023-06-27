@@ -1,5 +1,6 @@
 using app.Application.Commands;
 using app.Application.Interfaces;
+using app.Application.Log;
 using app.Application.Queries;
 using app.Application.Services;
 using app.Domain.Entities;
@@ -17,7 +18,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         //logging.ClearProviders();
         logging.AddSerilog(new LoggerConfiguration()
-            .WriteTo.EventCollector("http://localhost:8088/services/collector", "671153f3-d202-4c26-8e81-bbbdbeb5d1eb")
+            .WriteTo.EventCollector("http://localhost:8088/services/collector", "fb5fc0ee-285b-4523-bc59-d23acfcd7903")
             .CreateLogger());
     })
     .ConfigureServices(services =>
@@ -26,8 +27,10 @@ IHost host = Host.CreateDefaultBuilder(args)
               .SetBasePath(Directory.GetCurrentDirectory())
               .AddJsonFile("appsettings.json")
         .Build();
-        
-        // Registrar dependências
+
+        // Registrar dependências        
+        services.AddSingleton(typeof(ILoggerWorker<>), typeof(LoggerWorker<>));
+
         services.AddSingleton<IProductRepository, ProductRepository>();
         services.AddSingleton<IEstruturaComercialRepository, EstruturaComercialRepository>();
 

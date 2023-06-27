@@ -1,4 +1,5 @@
 using app.Application.Commands;
+using app.Application.Log;
 using app.Application.Queries;
 using MediatR;
 
@@ -6,19 +7,18 @@ namespace app.Worker
 {
     public class Worker : BackgroundService
     {
-        private ILogger<Worker> _logger;
+        private ILoggerWorker<Worker> _logger;        
         private readonly IMediator _mediator;
 
-        public Worker(ILogger<Worker> logger, IMediator mediator)
+        public Worker(ILoggerWorker<Worker> logger, IMediator mediator)
         {
             _logger = logger;
             _mediator = mediator;            
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {           
-
-            _logger.LogInformation($"{typeof(Worker)} - Worker running at: {DateTimeOffset.Now}");            
+        {            
+            _logger.LogInfo($"Worker running at: {DateTimeOffset.Now}");            
 
             await _mediator.Send(new GetEstruturaComercialQuery());
 
