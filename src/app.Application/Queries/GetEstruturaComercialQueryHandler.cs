@@ -4,7 +4,7 @@ using MediatR;
 
 namespace app.Application.Queries
 {
-    public class GetEstruturaComercialQueryHandler : IRequestHandler<GetEstruturaComercialQuery>
+    public class GetEstruturaComercialQueryHandler : IRequestHandler<GetEstruturaComercialQuery, bool>
     {
         private readonly IEstruturaComercialService _estruturaComercialService;
 
@@ -13,9 +13,9 @@ namespace app.Application.Queries
             _estruturaComercialService = estruturaComercialService;
         }
 
-        public async Task Handle(GetEstruturaComercialQuery request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(GetEstruturaComercialQuery request, CancellationToken cancellationToken)
         {
-            _estruturaComercialService.SetCacheEstruturaComercial();
+            return await _estruturaComercialService.SetCacheEstruturaComercial();
         }
     }
 }

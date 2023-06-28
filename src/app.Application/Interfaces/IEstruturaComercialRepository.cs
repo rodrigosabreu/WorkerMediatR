@@ -4,7 +4,7 @@ namespace app.Application.Interfaces
 {
     public interface IEstruturaComercialRepository
     {
-        void SetCacheEstruturaComercial();
+        Task<bool> SetCacheEstruturaComercial();
 
         Dictionary<int, EstruturaComercial> GetCacheEstruturaComercial();
     }

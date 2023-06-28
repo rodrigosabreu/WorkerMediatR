@@ -3,7 +3,6 @@ using app.Application.Log;
 using app.Domain.Entities;
 using app.Infrastructure.Context;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 
 namespace app.Infrastructure.Repository
 {
@@ -20,23 +19,24 @@ namespace app.Infrastructure.Repository
             _logger = logger;            
         }
 
-        public void SetCacheEstruturaComercial()
+        public async Task<bool> SetCacheEstruturaComercial()
         {
             try
             {
-                _logger.LogInfo($"Método SetCacheEstruturaComercial : {DateTimeOffset.Now}");
+                _logger.LogInfo($"Consultando Banco de Dados...");
 
                 var dados = _context.estruturas.ToList();
 
                 Dictionary<int, EstruturaComercial> dicionarioProdutos = dados.ToDictionary(p => p.IdCliente);
 
-                _cache.Set("EstruturaComercialCache", dicionarioProdutos);                
-                
+                _cache.Set("EstruturaComercialCache", dicionarioProdutos);
+
+                return true;
             }            
             catch(Exception e)
             {
-                _logger.LogException("Método SetCacheEstruturaComercial : {time} - Mensagem: ", e);
-                throw;
+                _logger.LogException("Erro ao consultar Banco de Dados", e);
+                return false;
             }
         }
 

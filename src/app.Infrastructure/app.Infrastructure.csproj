@@ -20,4 +20,8 @@
     <ProjectReference Include="..\app.Domain\app.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>

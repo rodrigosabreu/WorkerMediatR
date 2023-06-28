@@ -12,9 +12,9 @@ namespace app.Domain.Services
             _estruturaComercialRepository = estruturaComercialRepository;
         }        
 
-        public void SetCacheEstruturaComercial()
+        public async Task<bool> SetCacheEstruturaComercial()
         {
-            _estruturaComercialRepository.SetCacheEstruturaComercial();
+            return await _estruturaComercialRepository.SetCacheEstruturaComercial();
         }
 
         public Dictionary<int, EstruturaComercial> GetCacheEstruturaComercial()

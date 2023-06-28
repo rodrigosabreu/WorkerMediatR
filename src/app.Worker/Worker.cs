@@ -18,11 +18,12 @@ namespace app.Worker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {            
-            _logger.LogInfo($"Worker running at: {DateTimeOffset.Now}");            
+            _logger.LogInfo($"Iniciando o consumo do topico kafka");            
 
-            await _mediator.Send(new GetEstruturaComercialQuery());
+            var resp = await _mediator.Send(new GetEstruturaComercialQuery());
 
-            await _mediator.Send(new ProcessMessageCommand());
+            if(resp)
+                await _mediator.Send(new ProcessMessageCommand());
         }
 
 
