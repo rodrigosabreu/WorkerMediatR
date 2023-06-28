@@ -1,7 +1,9 @@
 ﻿using app.Application.Commands;
 using app.Application.Interfaces;
 using app.Application.Log;
+using app.Application.Queries;
 using app.Application.Services;
+using app.Domain.Entities;
 using app.Domain.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,8 @@ namespace app.Application.Registrations
             services.AddTransient<IKafkaConsumerService, KafkaConsumerService>();
             services.AddTransient<IRequestHandler<SendMessageCommand>, SendMessageCommandHandler>();
             services.AddTransient<IRequestHandler<ProcessMessageCommand>, ProcessMessageCommandHandler>();
+            services.AddTransient<IRequestHandler<GetProductsQuery, IEnumerable<Product>>, GetProductsQueryHandler>();
+            services.AddTransient<IRequestHandler<GetEstruturaComercialQuery, bool>, GetEstruturaComercialQueryHandler>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IEstruturaComercialService, EstruturaComercialService>();
             services.AddTransient<ISqsService, SqsService>();
