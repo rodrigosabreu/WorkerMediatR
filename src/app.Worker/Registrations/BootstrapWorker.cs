@@ -16,7 +16,7 @@ namespace app.Worker.Registrations
         {
             //logging.ClearProviders();
             logging.AddSerilog(new LoggerConfiguration()
-                .WriteTo.EventCollector("http://localhost:8088/services/collector", "fb5fc0ee-285b-4523-bc59-d23acfcd7903")
+                .WriteTo.EventCollector("http://localhost:8088/services/collector", "904f9c60-1815-4a64-b63f-ba9fef00204b")
                 .CreateLogger());
 
             return logging;

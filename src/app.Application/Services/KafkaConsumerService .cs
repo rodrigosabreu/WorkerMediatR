@@ -1,9 +1,11 @@
 ﻿using app.Application.Commands;
 using app.Application.Interfaces;
 using app.Application.Log;
+using app.Domain.Entities;
 using Confluent.Kafka;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace app.Application.Services
 {
@@ -48,25 +50,30 @@ namespace app.Application.Services
                         startConsume = true;
                         var message = consumeResult.Message.Value;
 
-                        //var t = JsonConvert.DeserializeObject<Transacao>(consumeResult.Message.Value);
-                        var transaction = consumeResult.Message.Value;                       
+                        var t = JsonConvert.DeserializeObject<Transacao>(consumeResult.Message.Value);
+                        var transaction = consumeResult.Message.Value;
 
-                        _logger.LogInfo($"Mensagem: {transaction}");
+                        var dic = new Dictionary<string, object>
+                        {
+                            ["CustomerId"] = t.CustomerId,
+                            ["TransactionId"] = t.TransactionId,
+                            ["TransactionType"] = t.TransactionType,
+                            ["Amount"] = t.Amount
+
+                        };
+                        
+                        _logger.LogInfo(dic, "Mensagem recebida");                        
 
                         await _mediator.Send(new SendMessageCommand()
                         {
                             Message = transaction
                         });
 
-                        //consumer.Commit(consumeResult);
-                    }
-                    catch (ConsumeException ex)
-                    {
-                        _logger.LogException("Erro em: {DateTimeOffset.Now}", ex);
-                    }
+                        consumer.Commit(consumeResult);
+                    }                  
                     catch (Exception ex)
                     {
-                        _logger.LogException("Erro em: {DateTimeOffset.Now}", ex);
+                        _logger.LogException("Erro ao consumir mensagem", ex);
                     }
                 }
             }
