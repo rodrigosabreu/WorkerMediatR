@@ -18,7 +18,7 @@ namespace app.Domain.Services
         }
 
         public Dictionary<int, EstruturaComercial> GetCacheEstruturaComercial()
-        {
+        {           
             return _estruturaComercialRepository.GetCacheEstruturaComercial();
         }
     }

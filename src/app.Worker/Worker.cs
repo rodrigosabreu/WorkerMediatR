@@ -1,6 +1,7 @@
 using app.Application.Commands;
 using app.Application.Log;
 using app.Application.Queries;
+using app.Application.Util;
 using MediatR;
 
 namespace app.Worker
@@ -17,7 +18,9 @@ namespace app.Worker
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {            
+        {
+            Util.Teste();
+
             _logger.LogInfo($"Iniciando o consumo do topico kafka");            
 
             var resp = await _mediator.Send(new GetEstruturaComercialQuery());

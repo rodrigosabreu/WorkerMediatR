@@ -12,11 +12,14 @@ namespace app.Worker.Registrations
             return services;
         }
 
-        public static ILoggingBuilder RegisterLogger(this ILoggingBuilder logging)
+        public static ILoggingBuilder RegisterLogger(this ILoggingBuilder logging, IConfiguration config)
         {
+            string url = config["SplunkLogging:Host"];
+            string token = config["SplunkLogging:Token"];
+
             //logging.ClearProviders();
             logging.AddSerilog(new LoggerConfiguration()
-                .WriteTo.EventCollector("http://localhost:8088/services/collector", "904f9c60-1815-4a64-b63f-ba9fef00204b")
+                .WriteTo.EventCollector(url, token)
                 .CreateLogger());
 
             return logging;

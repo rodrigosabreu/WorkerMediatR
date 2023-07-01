@@ -1,3 +1,4 @@
+using app.Application.LogWorker;
 using app.Application.Registrations;
 using app.Infrastructure.Registrations;
 using app.Worker;
@@ -6,19 +7,18 @@ using app.Worker.Registrations;
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
     {
-        BootstrapWorker.RegisterLogger(logging);
+        ApplicationLogging.LoggerFactory = new LoggerFactory();
+        BootstrapWorker.RegisterLogger(logging, ConfigBuilder());
     })
-    .ConfigureServices(services =>
-    {
-        IConfiguration config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
-        
+    .ConfigureServices((Action<IServiceCollection>)(services =>
+    {        
+
+        ApplicationLogging.LoggerFactory = new LoggerFactory();
+
         BootstrapApplication.RegisterApplication(services);
-        BootstrapInfrastructure.RegisterInfrastructure(services, config);
+        BootstrapInfrastructure.RegisterInfrastructure(services, ConfigBuilder());
         BootstrapWorker.RegisterWorker(services);
-    })
+    }))
     .ConfigureServices(services =>
     {
         services.AddHostedService<Worker>();
@@ -26,3 +26,11 @@ IHost host = Host.CreateDefaultBuilder(args)
     .Build();
 
 await host.RunAsync();
+
+static IConfiguration ConfigBuilder()
+{
+    return new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+}
