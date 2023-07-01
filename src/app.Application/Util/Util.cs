@@ -5,10 +5,9 @@ namespace app.Application.Util
 {
     public static class Util
     {
-        private readonly static ILogger _logger2 = ApplicationLogging.LoggerFactory.CreateLogger(typeof(Util).Name);
-
-        private static readonly string ClassName = typeof(Util).FullName;
-        private static readonly ILogger _logger = LoggerStatic.CreateLogger(ClassName);
+        private readonly static ILogger _logger2 = ApplicationLogging.LoggerFactory.CreateLogger(typeof(Util).FullName);
+        
+        private static readonly ILogger _logger = LoggerStatic.CreateLogger(typeof(Util).FullName);
 
         public static void Teste()
         {
