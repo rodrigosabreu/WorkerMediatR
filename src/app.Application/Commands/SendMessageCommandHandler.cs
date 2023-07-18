@@ -22,19 +22,29 @@ namespace app.Application.Commands
 
         public async Task Handle(SendMessageCommand request, CancellationToken cancellationToken)
         {
-            var transaction = JsonConvert.DeserializeObject<Transacao>(request.Message);
-            
+            var transaction = JsonConvert.DeserializeObject<Transacao>(request.Message);                       
+
             if (int.TryParse(transaction.CustomerId, out int clienteID))
             {
                 var estrutura = _estruturaComercialService.GetCacheEstruturaComercial();
 
+                _logger.LogInfo("Consultando cliente na estrutura comercial");
                 if (estrutura.TryGetValue(clienteID, out _))
                 {
                     _sqsService.PublishMessage(transaction, estrutura[clienteID]);
                 }
                 else
                 {
-                    _logger.LogInfo($"Descarte: {transaction.CustomerId} -  {transaction.Amount} -  {transaction.TransactionType}");
+                    var log = new Dictionary<string, object>
+                    {
+                        ["CustomerId"] = transaction.CustomerId,
+                        ["TransactionId"] = transaction.TransactionId,
+                        ["TransactionType"] = transaction.TransactionType,
+                        ["Amount"] = transaction.Amount
+
+                    };
+
+                    _logger.LogInfo(log, "Cliente não Consta na Estrutura Comercial");                   
                 }
             }
         }

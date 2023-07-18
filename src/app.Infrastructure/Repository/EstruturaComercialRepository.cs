@@ -23,11 +23,20 @@ namespace app.Infrastructure.Repository
         {
             try
             {
-                _logger.LogInfo($"Consultando Banco de Dados...");
+                _logger.LogInfo($"Consultando Banco de Dados");
 
                 var dados = _context.estruturas.ToList();
 
+                var log = new Dictionary<string, object>
+                {                    
+                    ["qtd_registros"] = dados.Count
+                };
+
+                _logger.LogInfo(log, "Registros Encontrados no Banco de Dados");
+
                 Dictionary<int, EstruturaComercial> dicionarioProdutos = dados.ToDictionary(p => p.IdCliente);
+
+                _logger.LogInfo($"Subindo Dados Para Memoria");
 
                 _cache.Set("EstruturaComercialCache", dicionarioProdutos);
 
@@ -35,7 +44,7 @@ namespace app.Infrastructure.Repository
             }            
             catch(Exception e)
             {
-                _logger.LogException("Erro ao consultar Banco de Dados", e);
+                _logger.LogException("Erro ao Consultar Banco de Dados", e);
                 return false;
             }
         }
@@ -44,8 +53,8 @@ namespace app.Infrastructure.Repository
         {
             if (_cache.TryGetValue("EstruturaComercialCache", out Dictionary<int, EstruturaComercial> dados))
             {
-                _logger.LogInfo($"Método GetCacheEstruturaComercial : {DateTimeOffset.Now}");
-                // Utilize os dados conforme necessário
+                _logger.LogInfo("Consultando Dados na Memoria");
+                
                 return dados;
             }
             return new Dictionary<int, EstruturaComercial> { };
