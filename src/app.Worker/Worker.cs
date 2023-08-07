@@ -1,7 +1,7 @@
 using app.Application.Commands;
+using app.Application.Interfaces;
 using app.Application.Log;
 using app.Application.Queries;
-using app.Application.Util;
 using MediatR;
 
 namespace app.Worker
@@ -10,21 +10,27 @@ namespace app.Worker
     {
         private ILoggerWorker<Worker> _logger;        
         private readonly IMediator _mediator;
+        private readonly IKafkaConsumerTimeAtendimentoService _kafkaConsumerTimeAtendimentoService;
 
-        public Worker(ILoggerWorker<Worker> logger, IMediator mediator)
+        public Worker(ILoggerWorker<Worker> logger, IMediator mediator, IKafkaConsumerTimeAtendimentoService kafkaConsumerTimeAtendimentoService)
         {
             _logger = logger;
-            _mediator = mediator;            
+            _mediator = mediator;
+            _kafkaConsumerTimeAtendimentoService = kafkaConsumerTimeAtendimentoService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInfo($"Iniciando o consumo do topico kafka");            
+            _logger.LogInfo($"Iniciando o consumo do topico kafka");
 
-            var resp = await _mediator.Send(new GetEstruturaComercialQuery());
+            await _kafkaConsumerTimeAtendimentoService.StartConsumingAsync();
 
-            if(resp)
-                await _mediator.Send(new ProcessMessageCommand());
+            //var resp = await _mediator.Send(new GetEstruturaComercialQuery());
+
+            //if(resp)
+            //    await _mediator.Send(new ProcessMessageCommand());
+
+
         }      
 
     }

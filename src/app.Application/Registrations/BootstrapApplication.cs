@@ -16,6 +16,7 @@ namespace app.Application.Registrations
         {
             services.AddSingleton(typeof(ILoggerWorker<>), typeof(LoggerWorker<>));
             services.AddTransient<IKafkaConsumerService, KafkaConsumerService>();
+            services.AddTransient<IKafkaConsumerTimeAtendimentoService, KafkaConsumerTimeAtendimentoPrivateService>();
             services.AddTransient<IRequestHandler<SendMessageCommand>, SendMessageCommandHandler>();
             services.AddTransient<IRequestHandler<ProcessMessageCommand>, ProcessMessageCommandHandler>();
             services.AddTransient<IRequestHandler<GetProductsQuery, IEnumerable<Product>>, GetProductsQueryHandler>();
